@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>7AURA | NDIS Disability Support Services, Victoria VIC</title>
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="theme-color" content="#ffffff">
+  <script>document.documentElement.classList.add('js');</script>
+  <style>
+    :root {
+      --navy: #000000;
+      --red: #d92b2b;
+      --bg: #ffffff;
+      --line: #e6e8f0;
+      --hover: #f3f5fb;
+      --nav-h: 130px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+      color: var(--navy);
+      background: var(--bg);
+    }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+
+
+    /* ---------- Top bar (scrolls away; navbar stays sticky) ---------- */
+    .topbar {
+      position: relative;
+      z-index: 101;
+      background: transparent;
+      color: #fff;
+    }
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: 42px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .social { display: flex; align-items: center; gap: 6px; }
+    .social a {
+      display: flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      color: #fff;
+      transition: background .2s, color .2s;
+    }
+    .social a:hover { background: rgba(255,255,255,.22); }
+    .social svg { width: 17px; height: 17px; fill: currentColor; }
+    .social svg.stroke { fill: none; stroke: currentColor; stroke-width: 2; }
+    .topbar-email {
+      display: flex; align-items: center; gap: 8px;
+      font-size: .95rem; font-weight: 500; color: #fff;
+    }
+    .topbar-email svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .topbar-email:hover { text-decoration: underline; }
+    .topbar a:focus-visible { outline-color: #fff; }
+    
+
+    /* ---------- Navbar ---------- */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: transparent;
+      --nav-text: #fff;
+      transition: background .3s, box-shadow .3s;
+    }
+    .logo-dark { display: none !important; }
+    .navbar.scrolled .logo-dark { display: block !important; }
+    .navbar.scrolled .logo-light { display: none !important; }
+    .navbar.scrolled {
+      --nav-text: #000;
+    }
+    /* Over the black footer: white text + white logo */
+    .navbar.on-footer { --nav-text: #fff; }
+    .navbar.on-footer .logo-dark { display: none !important; }
+    .navbar.on-footer .logo-light { display: block !important; }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      height: var(--nav-h);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      opacity: 0;
+      animation: fadeUp 1s cubic-bezier(.22, .61, .36, 1) .15s forwards;
+    }
+    .logo img {
+      height: 106px;
+      width: 128px;
+      object-fit: fill;
+      display: block;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .nav-menu { display: flex; align-items: center; gap: 8px; }
+    .nav-menu > li { position: relative; }
+    .nav-menu > li > a,
+    .dropdown-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--nav-text);
+      background: none;
+      border: 0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .nav-menu > li > a:hover,
+    .dropdown-toggle:hover,
+    .nav-menu > li > a.active { color: var(--red); }
+
+    .caret {
+      width: 8px; height: 8px;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(45deg) translateY(-2px);
+      transition: transform .2s;
+    }
+    .has-dropdown:hover .caret,
+    .has-dropdown.open .caret { transform: rotate(-135deg) translateY(-2px); }
+
+    /* Dropdown */
+    .dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      min-width: 320px;
+      padding: 8px 0;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 12px 32px rgba(28, 47, 107, .14);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(6px);
+      transition: opacity .18s, transform .18s, visibility .18s;
+    }
+    .has-dropdown:hover .dropdown,
+    .has-dropdown:focus-within .dropdown,
+    .has-dropdown.open .dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .dropdown a {
+      display: block;
+      padding: 11px 22px;
+      font-size: .98rem;
+      font-weight: 600;
+      color: var(--navy);
+    }
+    .dropdown a:hover,
+    .dropdown a:focus-visible { background: var(--hover); color: var(--red); }
+
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+
+    /* Mobile toggle */
+    .nav-toggle {
+      display: none;
+      width: 44px; height: 44px;
+      background: none; border: 0; cursor: pointer;
+      flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+    }
+    .nav-toggle span {
+      display: block; width: 24px; height: 2px;
+      background: var(--nav-text); transition: transform .2s, opacity .2s, background .3s;
+    }
+    .nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+    .nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+
+    /* ---------- Hero slideshow ---------- */
+    .hero {
+      position: relative;
+      margin-top: calc(-1 * (42px + var(--nav-h)));
+      height: 100vh;
+      min-height: 600px;
+      overflow: hidden;
+      background: #222;
+      color: #fff;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      visibility: hidden;
+      z-index: 0;
+    }
+    .slide .bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    /* mobile: the subject sits on the left of the first hero image, so anchor the crop there */
+    @media (max-width: 768px) {
+      .slide .bg.hero-bg-1 { background-position: 12% 30% !important; }
+    }
+    .slide::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,.45) 0%, rgba(0,0,0,0) 32%), linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.35) 35%, rgba(0,0,0,0) 65%);
+    }
+    /* current slide is visible; the outgoing one stays underneath until the new one has wiped over it */
+    .slide.active  { visibility: visible; z-index: 1; }
+    .slide.leaving { visibility: visible; z-index: 0; }
+    /* slow zoom-in on the background image while a slide is showing */
+    .slide .bg { will-change: transform; }
+    body:not(.loading) .slide.active .bg { animation: bgZoom 5.5s cubic-bezier(.2, .6, .3, 1) both; }
+    .slide.leaving .bg { transform: scale(1.1); }
+    @keyframes bgZoom { from { transform: scale(1); } to { transform: scale(1.1); } }
+    /* iris reveal: the new slide opens as a growing circle from the bottom-right corner */
+    .slide.entering { z-index: 2; }
+    body:not(.loading) .slide.entering { animation: irisIn 1.15s cubic-bezier(.65, 0, .25, 1) .1s both; }
+    @keyframes irisIn {
+      from { -webkit-clip-path: circle(0% at 88% 88%); clip-path: circle(0% at 88% 88%); }
+      to   { -webkit-clip-path: circle(150% at 88% 88%); clip-path: circle(150% at 88% 88%); }
+    }
+    /* the outgoing slide dims slightly as the circle takes over */
+    .slide.leaving .bg { filter: brightness(.75); transition: filter 1s ease; }
+    .slide-text {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      z-index: 1;
+    }
+    .slide-text .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 64px;
+    }
+    .slide-text h1 {
+      font-size: clamp(2rem, 4.6vw, 3.6rem);
+      line-height: 1.12;
+      font-weight: 600;
+      max-width: 16ch;
+      margin-bottom: 14px;
+      text-shadow: 0 2px 16px rgba(0,0,0,.35);
+    }
+    .slide-text p {
+      font-size: clamp(1rem, 1.6vw, 1.2rem);
+      line-height: 1.55;
+      max-width: 46ch;
+      text-shadow: 0 1px 10px rgba(0,0,0,.4);
+    }
+    .slide-text h1.wide { max-width: 20ch; }
+    .slide-text p { margin-bottom: 22px; }
+    .slide-eyebrow {
+      display: inline-block;
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #fff;
+      background: var(--red);
+      padding: 6px 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+    .slide-badges {
+      display: flex; flex-wrap: wrap; gap: 8px 10px;
+      list-style: none; padding: 0; margin: 0 0 18px;
+    }
+    .slide-badges li {
+      font-size: .85rem; font-weight: 500;
+      padding: 6px 14px;
+      border: 1px solid rgba(255,255,255,.55);
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    .slide-cta { display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn-hero {
+      display: inline-block;
+      padding: 13px 26px;
+      border: 2px solid var(--red);
+      border-radius: 4px;
+      background: var(--red);
+      color: #fff;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: background .25s, color .25s, border-color .25s;
+    }
+    .btn-hero:hover { background: #fff; color: var(--red); border-color: #fff; }
+    .btn-hero.ghost { background: transparent; border-color: #fff; color: #fff; }
+    .btn-hero.ghost:hover { background: #fff; color: #000; }
+    @media (max-width: 760px) {
+      .slide-text .wrap { padding-bottom: 96px; }
+      .slide-text h1.wide { max-width: none; }
+    }
+    body:not(.loading) .slide.active .slide-eyebrow { animation: textUp .9s cubic-bezier(.22, .61, .36, 1) .75s both; }
+    body:not(.loading) .slide.active .slide-text h1 { animation: textUp 1s cubic-bezier(.22, .61, .36, 1) .9s both; }
+    body:not(.loading) .slide.active .slide-badges  { animation: textUp 1s cubic-bezier(.22, .61, .36, 1) 1.05s both; }
+    body:not(.loading) .slide.active .slide-text p  { animation: textUp 1s cubic-bezier(.22, .61, .36, 1) 1.2s both; }
+    body:not(.loading) .slide.active .slide-cta     { animation: textUp 1s cubic-bezier(.22, .61, .36, 1) 1.35s both; }
+    @keyframes textUp {
+      from { opacity: 0; transform: translateY(32px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bgUp {
+      from { opacity: 0; transform: translateY(36px) scale(1.1); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .dots {
+      position: absolute;
+      right: max(24px, calc((100% - 1200px) / 2 + 24px));
+      bottom: 32px;
+      z-index: 4;
+      display: flex;
+      gap: 10px;
+    }
+    .dots button {
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+      transition: background .3s;
+    }
+    .dots button.active { background: #fff; }
+    .dots button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+    /* Hero contact box (glass) */
+    .hero-contact {
+      position: absolute;
+      right: max(24px, calc((100% - 1200px) / 2 + 24px));
+      bottom: 72px;
+      z-index: 4;
+      display: flex; align-items: center; gap: 18px;
+      padding: 14px 16px 14px 24px;
+      border: 1px solid rgba(255,255,255,.45);
+      border-radius: 16px;
+      background: rgba(255,255,255,.12);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      color: #fff;
+    }
+    .hero-contact span { font-size: 1rem; font-weight: 500; line-height: 1.3; }
+    .hero-contact a {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 22px;
+      border: 1.5px solid #fff; border-radius: 999px;
+      background: transparent; color: #fff;
+      font-size: .98rem; font-weight: 600;
+      transition: background .25s, color .25s, border-color .25s;
+    }
+    .hero-contact a:hover { background: var(--red); border-color: var(--red); color: #fff; }
+    .hero-contact svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    body:not(.loading) .hero-contact { animation: contactSlideIn .9s cubic-bezier(.22, .61, .36, 1) 1.6s both; }
+    @keyframes contactSlideIn {
+      from { opacity: 0; transform: translateX(120px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @media (max-width: 760px) {
+      /* leave room under the text for the button + dots so nothing overlaps */
+      .slide-text .wrap { padding-bottom: 148px; }
+    }
+    @media (max-width: 600px) {
+      /* Contact button sits below the text, left-aligned with it */
+      .hero-contact {
+        left: 24px; right: auto; bottom: 62px;
+        padding: 0; border: 0; border-radius: 0;
+        background: none;
+        -webkit-backdrop-filter: none; backdrop-filter: none;
+      }
+      .hero-contact span { display: none; }
+      .hero-contact a {
+        padding: 12px 24px;
+        background: rgba(255,255,255,.14);
+        -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+      }
+      /* slide-in from below instead of from the right on mobile */
+      @keyframes contactSlideIn {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      /* dots go under the button, left-aligned */
+      .dots { left: 24px; right: auto; bottom: 30px; }
+    }
+
+
+    /* ---------- Services marquee (3 scrolling rows) ---------- */
+    .marquee {
+      background: #fff;
+      overflow: hidden;
+      padding: 18px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 45s linear infinite;
+    }
+    .marquee-track:nth-child(2) { animation-direction: reverse; animation-duration: 40s; }
+    .marquee-track:nth-child(3) { animation-duration: 50s; }
+    .marquee-group { display: flex; align-items: center; flex-shrink: 0; margin: 0; padding: 0; list-style: none; }
+    .marquee-group li { display: flex; align-items: center; white-space: nowrap; padding: 0 36px; }
+    .marquee-group span {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #e8453c; /* fallback */
+      background: linear-gradient(90deg, var(--g1), var(--g2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    /* row colours follow the pathway cards: red-orange, blue-purple, green-teal */
+    .marquee-track:nth-child(1) { --g1: #e0245e; --g2: #f97316; }
+    .marquee-track:nth-child(2) { --g1: #1d6fe8; --g2: #8b5cf6; }
+    .marquee-track:nth-child(3) { --g1: #16a870; --g2: #0e7fb0; }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    @media (max-width: 600px) {
+      .marquee-group li { padding: 0 20px; }
+      .marquee-group span { font-size: 1rem; }
+    }
+
+
+    /* ---------- About ---------- */
+    .about {
+      padding: 100px 24px;
+      background: #fff;
+      overflow: hidden;
+    }
+    .about-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: center;
+    }
+    .about-img {
+      width: 100%;
+      aspect-ratio: 4 / 4.6;
+      object-fit: cover;
+      object-position: 22% center;
+      border-radius: 18px;
+      display: block;
+    }
+    /* rainbow highlight word used in headings */
+    .hl {
+      background: linear-gradient(100deg, #ff2d55 0%, #ff9500 22%, #ffc800 42%, #30d158 62%, #0a84ff 82%, #bf5af2 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      -webkit-box-decoration-break: clone;
+      box-decoration-break: clone;
+    }
+    .slide-text h1 .hl { text-shadow: none; filter: drop-shadow(0 2px 10px rgba(0,0,0,.35)); }
+    .about-text h2 {
+      font-size: clamp(2.3rem, 4.6vw, 3.7rem);
+      line-height: 1.08;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      color: #000;
+      margin-bottom: 34px;
+    }
+    .about-text h2 .brand {
+      background: linear-gradient(100deg, #ff2d55 0%, #ff9500 22%, #ffc800 42%, #30d158 62%, #0a84ff 82%, #bf5af2 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+    .about-text h2::after {
+      content: "";
+      display: block;
+      width: 84px;
+      height: 5px;
+      margin-top: 22px;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #ff2d55, #ff9500, #ffc800, #30d158, #0a84ff, #bf5af2);
+      transform-origin: left;
+    }
+    .js .about-text h2::after { transform: scaleX(0); transition: transform 1s cubic-bezier(.22, .61, .36, 1) .9s; }
+    .js .about-text.in h2::after { transform: scaleX(1); }
+    .about-text p {
+      font-size: 1.06rem;
+      line-height: 1.75;
+      color: #2b2f3a;
+      max-width: 60ch;
+      margin-bottom: 18px;
+    }
+    .about-text p:last-child { margin-bottom: 0; }
+
+    /* Slide-in on scroll */
+    .js .reveal {
+      opacity: 0;
+      transition: opacity 1s ease, transform 1.1s cubic-bezier(.22, .61, .36, 1);
+    }
+    .js .reveal-left  { transform: translateX(-90px); }
+    .js .reveal-right { transform: translateX(90px); transition-delay: .2s; }
+    .js .reveal.in { opacity: 1; transform: none; }
+
+    @media (max-width: 900px) {
+      .about { padding: 64px 20px; }
+      .about-inner { grid-template-columns: 1fr; gap: 36px; }
+      .about-img { aspect-ratio: 4 / 3.4; }
+      .js .reveal-left  { transform: translateX(-50px); }
+      .js .reveal-right { transform: translateX(50px); }
+    }
+
+
+    /* ---------- Services ---------- */
+    .services {
+      padding: 80px 24px 80px;
+      background: #f5f6fa;
+      overflow: hidden;
+    }
+    .services-inner { max-width: 1200px; margin: 0 auto; }
+    .services-head {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 64px;
+      align-items: start;
+      margin-bottom: 48px;
+    }
+    .services-head h2 {
+      font-size: clamp(2.2rem, 4.2vw, 3.4rem);
+      line-height: 1.1;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      color: #000;
+    }
+    .services-head h2::after {
+      content: "";
+      display: block;
+      width: 84px; height: 5px;
+      margin-top: 22px;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #ff2d55, #ff9500, #ffc800, #30d158, #0a84ff, #bf5af2);
+      transform-origin: left;
+    }
+    .js .svc-title-wrap h2::after { transform: scaleX(0); transition: transform 1s cubic-bezier(.22,.61,.36,1) .9s; }
+    .js .svc-title-wrap.in h2::after { transform: scaleX(1); }
+    .services-intro p {
+      font-size: 1.06rem;
+      line-height: 1.75;
+      color: #2b2f3a;
+      margin-bottom: 16px;
+    }
+    .services-intro p:last-child { margin-bottom: 0; }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .services-grid { row-gap: 34px; column-gap: 0; }
+    .svc {
+      position: relative;
+      text-align: center;
+      padding: 4px 28px 0;
+      scroll-margin-top: 150px;
+    }
+    .svc-pic {
+      position: relative;
+      width: 150px; height: 150px;
+      margin: 0 auto 18px;
+    }
+    .svc-img {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      background-color: #dfe3ee;
+      background-size: auto 175%;
+      background-repeat: no-repeat;
+      transition: transform .6s cubic-bezier(.22,.61,.36,1);
+    }
+    .svc:hover .svc-img { transform: scale(1.05); }
+    .svc h3 { font-size: 1.15rem; line-height: 1.3; font-weight: 600; color: #000; margin-bottom: 8px; }
+    .svc p { font-size: .95rem; line-height: 1.55; color: #5d6372; max-width: 32ch; margin: 0 auto 8px; }
+    .svc-link {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: 50%;
+      color: #000;
+      transition: transform .25s, color .25s;
+    }
+    .svc-link svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .svc:hover .svc-link { transform: translateX(6px); color: var(--red); }
+    .svc-link:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+    .svc:last-child:nth-child(3n+1) { grid-column: 2; }
+
+    /* Cards slide in: left column from the left, right column from the right, middle from below */
+    .js .svc { transition-delay: var(--d, 0s); }
+    .js .svc:nth-child(3n+1) { transform: translateX(-100px); }
+    .js .svc:nth-child(3n+2) { transform: translateY(70px); }
+    .js .svc:nth-child(3n)   { transform: translateX(100px); }
+    .js .svc.reveal.in { opacity: 1; transform: none; }
+
+    .services-more { display: flex; justify-content: flex-end; margin-top: 30px; }
+    .btn-all {
+      display: inline-flex; align-items: center; gap: 14px;
+      padding: 15px 18px 15px 30px;
+      border-radius: 999px;
+      background: #000; color: #fff;
+      font-size: 1.02rem; font-weight: 700;
+      transition: background .25s, transform .25s;
+    }
+    .btn-all .arrow {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: #fff; color: #000;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .25s;
+    }
+    .btn-all svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+    .btn-all:hover { background: var(--red); }
+    .btn-all:hover .arrow { transform: translateX(4px); }
+    .btn-all:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+    .about-more { margin-top: 28px; }
+
+    @media (max-width: 960px) {
+      .services { padding: 70px 20px 80px; }
+      .services-head { grid-template-columns: 1fr; gap: 28px; margin-bottom: 44px; }
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .svc:last-child:nth-child(3n+1) { grid-column: auto; }
+      .services-grid { row-gap: 48px; }
+      .js .svc:nth-child(odd)  { transform: translateX(-60px); }
+      .js .svc:nth-child(even) { transform: translateX(60px); }
+      .js .svc.reveal.in { transform: none; }
+      .services-more { margin-top: 36px; }
+    }
+    @media (max-width: 600px) {
+      .services-grid { grid-template-columns: 1fr; }
+      .services-more { justify-content: center; }
+    }
+
+
+
+    /* ---------- Why choose us ---------- */
+    .why { --g: #f4f4f4; background: var(--g); padding: 90px 24px 100px; overflow: hidden; }
+    .why-inner { max-width: 1240px; margin: 0 auto; }
+    .why-head {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 64px;
+      align-items: start;
+      margin-bottom: 56px;
+    }
+    .why-eyebrow { display: block; font-size: .9rem; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--red); margin-bottom: 14px; }
+    .why-head h2 { font-size: clamp(2.1rem, 3.9vw, 3.2rem); line-height: 1.15; font-weight: 600; letter-spacing: -0.025em; color: #111; max-width: 14ch; }
+    .why-head p { font-size: 1.06rem; line-height: 1.75; color: #5a5f6c; max-width: 62ch; margin-bottom: 26px; }
+    .why-link {
+      display: inline-block;
+      font-size: .9rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+      color: #111;
+      padding-bottom: 5px;
+      border-bottom: 2px solid var(--red);
+      transition: color .2s;
+    }
+    .why-link:hover { color: var(--red); }
+    .why-link:focus-visible { outline: 2px solid var(--red); outline-offset: 4px; }
+
+    .why-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .wcard {
+      position: relative;
+      background: #fff;
+      border-radius: 28px;
+      padding: 14px 14px 34px;
+      display: flex; flex-direction: column;
+    }
+    .wimg {
+      height: 200px;
+      border-radius: 20px;
+      background-color: #e3e6ee;
+      background-repeat: no-repeat;
+      margin-bottom: 24px;
+    }
+    .wcard h3, .wcard p { padding: 0 14px; }
+    .wcard h3 { font-size: 1.3rem; line-height: 1.3; font-weight: 600; color: #111; margin-bottom: 16px; }
+    .wcard p { font-size: 1rem; line-height: 1.65; color: #5a5f6c; }
+
+    .js .wcard { transform: translateY(44px); transition-delay: var(--d, 0s); }
+    .js .wcard.reveal.in { opacity: 1; transform: none; }
+
+    @media (max-width: 1100px) { .why-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 900px) {
+      .why { padding: 64px 20px 72px; }
+      .why-head { grid-template-columns: 1fr; gap: 24px; margin-bottom: 40px; }
+    }
+    @media (max-width: 600px) { .why-grid { grid-template-columns: 1fr; } }
+
+    /* ---------- Mobile ---------- */
+    @media (max-width: 900px) {
+      .nav-toggle { display: flex; }
+      .nav-menu {
+        position: absolute;
+        top: 100%;
+        left: 0; right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 8px 16px 16px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--line);
+        display: none;
+        max-height: calc(100vh - var(--nav-h));
+        overflow-y: auto;
+      }
+      .nav-menu.open { display: flex; }
+      .nav-menu > li > a,
+      .dropdown-toggle { color: var(--navy); }
+      .nav-menu > li > a:hover, .dropdown-toggle:hover, .nav-menu > li > a.active { color: var(--red); }
+      .nav-menu > li > a,
+      .dropdown-toggle { width: 100%; justify-content: space-between; padding: 14px 8px; }
+      .dropdown {
+        position: static;
+        min-width: 0;
+        border: 0;
+        box-shadow: none;
+        padding: 0 0 0 12px;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        display: none;
+      }
+      .has-dropdown:hover .dropdown { display: none; }
+      .has-dropdown.open .dropdown { display: block; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+      .slide.entering, .slide.active .bg { animation: none !important; }
+      .logo { animation: none; opacity: 1; }
+      .marquee-track { animation: none; }
+      .marquee { overflow-x: auto; }
+      .js .reveal { opacity: 1; transform: none; transition: none; }
+      .slide.active .slide-eyebrow, .slide.active .slide-badges, .slide.active .slide-text h1, .slide.active .slide-text p, .slide.active .slide-cta { animation: none; }
+    }
+
+    /* ---------- Specialist Complex Care (card style) ---------- */
+    .complex {
+      position: relative;
+      padding: 56px 24px;
+      background: #dfe3ea url('complex-care.png') center / cover no-repeat;
+      overflow: hidden;
+    }
+    .complex::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,.72);
+      backdrop-filter: blur(3px);
+    }
+    .complex-inner { position: relative; max-width: 1240px; margin: 0 auto; }
+    .complex-card {
+      display: grid;
+      grid-template-columns: minmax(280px, 400px) 1fr;
+      gap: 48px;
+      align-items: center;
+      background: transparent;
+      color: #111;
+      padding: 24px 12px;
+    }
+    .complex-img {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      object-position: 70% center;
+      border-radius: 20px;
+      display: block;
+    }
+    .complex h2 { font-size: clamp(1.7rem, 2.8vw, 2.2rem); font-weight: 700; margin-bottom: 14px; letter-spacing: -0.01em; }
+    .complex p { font-size: 1.02rem; line-height: 1.7; color: #4a4f5c; margin-bottom: 18px; }
+    .complex .complex-lead { font-weight: 600; color: #111; margin-bottom: 12px; }
+    .complex-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 28px; margin-bottom: 22px; }
+    .complex-list li {
+      position: relative; padding-left: 26px;
+      font-size: .96rem; line-height: 1.5; color: #2a2e38;
+    }
+    .complex-list li::before {
+      content: ""; position: absolute; left: 0; top: .4em;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--red);
+      box-shadow: inset 0 0 0 3px var(--red), inset 0 0 0 7px #fff;
+    }
+    .complex-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--red); color: #fff;
+      font-size: 1.02rem; font-weight: 600;
+      padding: 14px 26px; border-radius: 999px;
+      transition: filter .2s, transform .2s;
+    }
+    .complex-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+    .complex-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+
+    /* ---------- Pathways (after marquee) ---------- */
+    .paths { background: #fff; padding: 48px 24px 56px; overflow: hidden; }
+    .paths-grid {
+      max-width: 1240px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+    }
+    .path {
+      --c: #f07a22; --tint: #fff4ea;
+      position: relative; display: flex; flex-direction: column; align-items: flex-start;
+      padding: 30px 28px 22px; min-height: 0;
+      background: #fff; border-radius: 20px; overflow: hidden;
+      color: inherit; text-decoration: none; isolation: isolate;
+      box-shadow: 0 6px 24px rgba(20, 40, 90, .09); border: 1px solid #eceff6;
+      transition: opacity 1s ease, transform 1.1s cubic-bezier(.22, .61, .36, 1), box-shadow .3s ease, color .3s ease;
+    }
+    .path.blue { --c: #124e8c; --tint: #eaf2fb; }
+    .path.red  { --c: #d92b2b; --tint: #fdeded; }
+    /* accent bar */
+    .path::after {
+      content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 6px; background: var(--c);
+    }
+    .path-eyebrow { margin-top: 6px; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--c); transition: color .3s ease; }
+    .path h3 { margin: 10px 0 0; font-size: clamp(1.3rem, 1.9vw, 1.6rem); line-height: 1.25; font-weight: 700; color: #0f2f57; transition: color .3s ease; }
+    .path-link {
+      margin-top: auto; padding-top: 18px;
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 1.02rem; font-weight: 600; color: var(--c); transition: color .3s ease;
+    }
+    .path-link i {
+      width: 34px; height: 34px; border-radius: 50%; background: var(--c); color: #fff;
+      display: grid; place-items: center; transition: transform .3s ease, background .3s ease, color .3s ease;
+    }
+    .path-link svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+    .path:hover, .path:focus-visible { box-shadow: 0 18px 40px rgba(20, 40, 90, .18); }
+    .path:hover .path-link i, .path:focus-visible .path-link i { transform: translateX(6px); }
+    .path:focus-visible { outline: 3px solid var(--c); outline-offset: 4px; }
+
+    /* slide-in on scroll (uses the site's reveal observer) */
+    .js .path.reveal { opacity: 0; transition: box-shadow .3s ease, transform .3s ease; }
+    .js .path.reveal.in { opacity: 1; animation: pathIn 1.1s cubic-bezier(.22, .61, .36, 1) var(--d, 0s) backwards; }
+    .js .path.reveal.in:hover { transform: translateY(-6px); }
+    @keyframes pathIn { from { opacity: 0; transform: translateX(-120px); } to { opacity: 1; transform: none; } }
+
+    @media (max-width: 900px) {
+      .paths { padding: 48px 20px 56px; }
+      .paths-grid { grid-template-columns: 1fr; gap: 20px; }
+      .path { min-height: 0; padding: 28px 24px 24px; }
+      @keyframes pathIn { from { opacity: 0; transform: translateX(-60px); } to { opacity: 1; transform: none; } }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .js .path.reveal, .js .path.reveal.in { opacity: 1; animation: none; }
+    }
+
+    /* ---------- Know more banner (after hero) ---------- */
+    .know {
+      position: relative; overflow: hidden;
+      background: #8f1d22; color: #fff;
+      min-height: 240px; display: flex; align-items: center;
+    }
+    .know-text { position: relative; z-index: 2; padding: 36px 24px 36px max(24px, calc((100vw - 1240px) / 2 + 24px)); max-width: 62%; }
+    .know h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.6rem, 3vw, 2.5rem); line-height: 1.2; font-weight: 700; letter-spacing: -0.01em;
+    }
+    .know-img {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 42%;
+      background: url('hm14.jpg') 55% 30% / cover no-repeat;
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 20% 100%);
+    }
+    .js .know-text.reveal { transform: none; }
+    .js .know-img.reveal-right { transform: translateX(90px); }
+    .js .know-text.reveal.in, .js .know-img.reveal.in { opacity: 1; transform: none; }
+    /* sentences slide in from the left, one after another */
+    .js .know-text > * {
+      opacity: 0; transform: translateX(-90px);
+      transition: opacity 1s ease, transform 1.1s cubic-bezier(.22, .61, .36, 1);
+    }
+    .js .know-text.in > * { opacity: 1; transform: none; }
+    .js .know-text > :nth-child(1) { transition-delay: .1s; }
+    .js .know-text > :nth-child(2) { transition-delay: .35s; }
+    @media (max-width: 900px) { .js .know-text > * { transform: translateX(-50px); } }
+    @media (prefers-reduced-motion: reduce) { .js .know-text > * { opacity: 1; transform: none; transition: none; } }
+    @media (max-width: 900px) {
+      .know { flex-direction: column; align-items: stretch; min-height: 0; }
+      .know-text { max-width: none; padding: 36px 24px 24px; }
+      .know-img { position: relative; width: 100%; height: 180px; clip-path: polygon(0 12%, 100% 0, 100% 100%, 0 100%); }
+    }
+
+
+    /* ---------- Company summary (before footer) ---------- */
+    .intro { background: #fff; padding: 40px 24px 70px; }
+    .intro-card {
+      max-width: 1240px; margin: 0 auto;
+      background: #f5f5f6; border-radius: 40px;
+      padding: 44px 48px 48px;
+    }
+    .intro-card h2 {
+      text-align: center; color: #111;
+      font-size: clamp(1.5rem, 2.6vw, 2.1rem); line-height: 1.25;
+      font-weight: 700; letter-spacing: -0.015em; margin-bottom: 22px;
+    }
+    .intro-card p { font-size: 1.08rem; line-height: 1.75; color: #3b4050; margin-bottom: 18px; }
+    .intro-card p:last-child { margin-bottom: 0; }
+    .intro-card a { color: var(--red); transition: opacity .2s; }
+    .intro-card a:hover { opacity: .75; text-decoration: underline; }
+    .js .intro-card.reveal { transform: translateY(60px); transition: opacity 1s ease, transform 1.1s cubic-bezier(.22, .61, .36, 1); }
+    .js .intro-card.reveal.in { opacity: 1; transform: none; }
+    /* heading and paragraphs fade up one after another */
+    .js .intro-card > * {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity .9s ease, transform 1s cubic-bezier(.22, .61, .36, 1);
+    }
+    .js .intro-card.in > * { opacity: 1; transform: none; }
+    .js .intro-card > :nth-child(1) { transition-delay: .3s; }
+    .js .intro-card > :nth-child(2) { transition-delay: .55s; }
+    .js .intro-card > :nth-child(3) { transition-delay: .8s; }
+    @media (prefers-reduced-motion: reduce) { .js .intro-card > * { opacity: 1; transform: none; transition: none; } }
+    @media (max-width: 700px) {
+      .intro { padding: 24px 16px 48px; }
+      .intro-card { border-radius: 28px; padding: 30px 22px 34px; }
+    }
+
+    /* Complex care: image slides in, text fades up (triggered when the card scrolls into view) */
+    .complex { overflow-x: clip; }
+    .js .complex-card.reveal { opacity: 1; transform: none; transition: none; }
+    .js .complex-img {
+      opacity: 0; transform: translateX(-90px);
+      transition: opacity 1s ease, transform 1.2s cubic-bezier(.22, .61, .36, 1);
+    }
+    .js .complex-card.in .complex-img { opacity: 1; transform: none; }
+    .js .complex-text > *, .js .complex-list li {
+      opacity: 0; transform: translateY(26px);
+      transition: opacity .9s ease, transform 1s cubic-bezier(.22, .61, .36, 1);
+    }
+    .js .complex-card.in .complex-text > *, .js .complex-card.in .complex-list li { opacity: 1; transform: none; }
+    .js .complex-text > :nth-child(1) { transition-delay: .25s; }
+    .js .complex-text > :nth-child(2) { transition-delay: .4s; }
+    .js .complex-text > :nth-child(3) { transition-delay: .55s; }
+    .js .complex-text > :nth-child(4) { opacity: 1; transform: none; transition: none; }
+    .js .complex-text > :nth-child(5) { transition-delay: 1.3s; }
+    .js .complex-text > :nth-child(6) { transition-delay: 1.45s; }
+    .js .complex-list li:nth-child(1) { transition-delay: .7s; }
+    .js .complex-list li:nth-child(2) { transition-delay: .78s; }
+    .js .complex-list li:nth-child(3) { transition-delay: .86s; }
+    .js .complex-list li:nth-child(4) { transition-delay: .94s; }
+    .js .complex-list li:nth-child(5) { transition-delay: 1.02s; }
+    .js .complex-list li:nth-child(6) { transition-delay: 1.1s; }
+    .js .complex-list li:nth-child(7) { transition-delay: 1.18s; }
+    .js .complex-list li:nth-child(8) { transition-delay: 1.26s; }
+    .js .complex-list li:nth-child(9) { transition-delay: 1.34s; }
+    @media (max-width: 900px) { .js .complex-img { transform: translateX(-50px); } }
+    @media (prefers-reduced-motion: reduce) {
+      .js .complex-img, .js .complex-text > *, .js .complex-list li { opacity: 1; transform: none; transition: none; }
+    }
+    @media (max-width: 900px) {
+      .complex { padding: 40px 16px; }
+      .complex-card { grid-template-columns: 1fr; gap: 28px; padding: 8px 0; }
+      .complex-img { aspect-ratio: 16 / 11; object-position: 75% center; }
+      .complex-list { grid-template-columns: 1fr; }
+    }
+
+    /* ---------- Footer ---------- */
+    .footer { background: #000; color: rgba(255,255,255,.78); padding: 130px 24px 0; }
+    .footer-inner {
+      max-width: 1240px; margin: 0 auto;
+      display: grid; grid-template-columns: 1.4fr .8fr 3.4fr 1.4fr; gap: 40px;
+      padding-bottom: 110px;
+    }
+    .footer-logo { display: inline-block; }
+    .footer-logo-mark { position: relative; display: inline-block; margin-bottom: 20px; }
+    .footer-logo img { height: 84px; width: auto; display: block; }
+    /* second copy, clipped to the bottom strip where the black "aura" text sits, inverted so it shows white */
+    .footer-logo img.footer-logo-text { position: absolute; left: 0; top: 0; filter: invert(1) brightness(1.4); clip-path: inset(80% 0 0 0); }
+    .footer-about { font-size: .98rem; line-height: 1.7; max-width: 34ch; margin-bottom: 22px; }
+    .footer-social { display: flex; gap: 10px; }
+    .footer-social a {
+      display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.25); color: #fff;
+      transition: background .2s, border-color .2s;
+    }
+    .footer-social a:hover { background: var(--red); border-color: var(--red); }
+    .footer-social svg { width: 18px; height: 18px; fill: currentColor; }
+    .footer-social svg.stroke { fill: none; stroke: currentColor; stroke-width: 2; }
+    .footer h4 { color: #fff; font-size: 1.05rem; font-weight: 600; margin-bottom: 20px; position: relative; padding-bottom: 12px; }
+    .footer h4::after { content: ""; position: absolute; left: 0; bottom: 0; width: 32px; height: 3px; border-radius: 2px; background: var(--red); }
+    .footer-links { display: grid; gap: 16px; }
+    .footer-links.two-col { grid-auto-flow: column; grid-template-rows: repeat(5, auto); column-gap: 32px; }
+    .footer-links a { font-size: .96rem; transition: color .2s, padding-left .2s; }
+    .footer-links a:hover { color: #fff; padding-left: 4px; }
+    .footer-contact { display: grid; gap: 22px; }
+    .footer-contact li { display: flex; gap: 12px; font-size: .96rem; line-height: 1.55; }
+    .footer-contact svg { flex: none; width: 20px; height: 20px; margin-top: 2px; fill: none; stroke: var(--red); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .footer-contact a:hover { color: #fff; text-decoration: underline; }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,.14); }
+    .footer-bottom-inner {
+      max-width: 1240px; margin: 0 auto; padding: 32px 0;
+      display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+      font-size: .88rem; color: rgba(255,255,255,.6);
+    }
+    .footer-bottom a:hover { color: #fff; }
+    @media (max-width: 1000px) { .footer-inner { grid-template-columns: 1fr 1fr; } .footer-services { grid-column: 1 / -1; } }
+    @media (max-width: 600px) {
+      .footer { padding-top: 84px; }
+      .footer-inner { grid-template-columns: 1fr; gap: 36px; }
+      .footer-links.two-col { grid-auto-flow: row; grid-template-rows: none; }
+      .footer-bottom-inner { flex-direction: column; text-align: center; align-items: center; }
+    }
+
+    /* ---------- Loading screen ---------- */
+    .loader {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      background: #fff;
+      transition: opacity .6s ease, visibility .6s ease;
+    }
+    .loader.hide { opacity: 0; visibility: hidden; }
+    body.loading { overflow: hidden; }
+    .loader-ring { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; }
+    .loader-logo { width: 64px; height: auto; max-height: 64px; object-fit: contain; animation: loaderPulse 1.8s ease-in-out infinite; }
+    .loader-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; animation: loaderSpin 1s linear infinite; }
+    .loader-ring .track { fill: none; stroke: #ececec; stroke-width: 3; }
+    .loader-ring .arc { fill: none; stroke: var(--red); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 110 493; }
+    @keyframes loaderSpin { to { transform: rotate(360deg); } }
+    @keyframes loaderPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(.92); opacity: .8; } }
+    @media (prefers-reduced-motion: reduce) {
+      .loader-ring svg, .loader-logo { animation-duration: 4s; }
+    }
+  </style>
+<style id="nav-active-fix">.nav-menu > li > a.active,.has-dropdown.current > .dropdown-toggle,.dropdown a.active{color:var(--red,#e31e24)}</style>
+<style id="path-colors">
+/* gradient shades drawn from the logo's rainbow */
+.path{--c:#d6204f;--sh:rgba(224,64,64,.38);background:linear-gradient(135deg,#e0245e 0%,#f0502a 55%,#ff8a1f 100%);border:0;color:#fff;box-shadow:0 12px 30px var(--sh)}
+.path.blue{--c:#2a5bd7;--sh:rgba(80,70,220,.38);background:linear-gradient(135deg,#0f7ae5 0%,#4f5ee0 50%,#9b4fe0 100%)}
+.path.red{--c:#0c8a5e;--sh:rgba(15,150,120,.38);background:linear-gradient(135deg,#17b26a 0%,#0e9a8a 50%,#0a74c2 100%)}
+.path{padding:22px 28px 16px}
+.path h3{margin-top:6px}
+.path-link{padding-top:10px}
+.path::after{height:0}
+.path::before{content:"";position:absolute;right:-60px;top:-60px;width:190px;height:190px;border-radius:50%;background:rgba(255,255,255,.16);z-index:-1}
+.path-eyebrow{color:rgba(255,255,255,.9)}
+.path h3{color:#fff}
+.path-desc{margin-top:8px;font-size:.96rem;line-height:1.5;color:rgba(255,255,255,.94)}
+.path-link{color:#fff}
+.path-link i{background:#fff;color:var(--c)}
+.path:hover,.path:focus-visible{box-shadow:0 20px 44px var(--sh)}
+</style>
+</head>
+<body class="loading">
+
+  <div class="loader" id="loader" role="status" aria-label="Loading">
+    <div class="loader-ring">
+      <svg viewBox="0 0 200 200" aria-hidden="true">
+        <circle class="track" cx="100" cy="100" r="96"/>
+        <circle class="arc" cx="100" cy="100" r="96"/>
+      </svg>
+      <img class="loader-logo" src="aura-logo.png" alt="Aura">
+    </div>
+  </div>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="social">
+        <a href="https://www.facebook.com/7Aura.au" aria-label="Facebook" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/7aura.au/?hl=en" aria-label="Instagram" target="_blank" rel="noopener">
+          <svg class="stroke" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+        </a>
+      </div>
+      <a class="topbar-email" href="mailto:7auraau@gmail.com">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        7auraau@gmail.com
+      </a>
+    </div>
+  </div>
+
+  <header class="navbar">
+    <nav class="nav-inner" aria-label="Main navigation">
+      <a href="index.html" class="logo" aria-label="Aura home">
+        <img class="logo-light" src="aura-logo-white.png" alt="Aura logo" onerror="this.onerror=null;this.src='aura-logo.png'">
+        <img class="logo-dark" src="aura-logo.png" alt="" aria-hidden="true">
+      </a>
+
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li class="has-dropdown">
+          <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+            Services <span class="caret"></span>
+          </button>
+          <ul class="dropdown">
+            <li><a href="supported-independent-living.html">Supported Independent Living (SIL)</a></li>
+            <li><a href="Individualised_Living_Options.html">Individualised Living Options (ILO)</a></li>
+            <li><a href="Short_Term_Accommodation.html">Short Term Accommodation (STA)</a></li>
+            <li><a href="NDIS_Complex_Care.html">NDIS Complex Care</a></li>
+            <li><a href="NDIS_Mental_Health_Care.html">NDIS Mental health care</a></li>
+            <li><a href="support_coordination.html">Support Coordination</a></li>
+            <li><a href="NDIS_In-Home_Support.html">NDIS In-Home Support</a></li>
+            <li><a href="Community_Access.html">Community Access</a></li>
+            <li><a href="Community_Nursing.html">Community Nursing</a></li>
+            <li><a href="Disability_Transport_Services.html">Disability Transport Services</a></li>
+          </ul>
+        </li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="career.html">Career</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="slide active entering">
+        <div class="bg hero-bg-1" style="background-image:url('hero-1.jpg'); background-position:center 30%;"></div>
+        <div class="slide-text"><div class="wrap">
+          <h1>Care that feels like family</h1>
+          <p>Support that respects each person’s goals and keeps the people who love them close.</p>
+        </div></div>
+      </div>
+      <div class="slide">
+        <div class="bg" style="background-image:url('hero-2.jpg'); background-position:center 35%;"></div>
+        <div class="slide-text"><div class="wrap">
+          <h1>Everyday support, with dignity</h1>
+          <p>Skilled, caring support workers who help you live at home the way you choose.</p>
+        </div></div>
+      </div>
+      <div class="slide">
+        <div class="bg" style="background-image:url('hero-3.jpg'); background-position:center 40%;"></div>
+        <div class="slide-text"><div class="wrap">
+          <h1>Independence at your own pace</h1>
+          <p>From community access to accommodation, we help you get out, get involved and feel at home.</p>
+        </div></div>
+      </div>
+      <div class="hero-contact">
+        <span>Need support?<br>Talk to our team</span>
+        <a href="contact.html">Contact Us <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="dots" role="tablist" aria-label="Choose slide">
+        <button type="button" aria-label="Show slide 1" class="active"></button>
+        <button type="button" aria-label="Show slide 2"></button>
+        <button type="button" aria-label="Show slide 3"></button>
+      </div>
+    </section>
+
+
+    <section class="marquee" aria-label="Our services">
+      <div class="marquee-track"><ul class="marquee-group"><li><span>Supported Independent Living (SIL)</span></li><li><span>Individualised Living Options (ILO)</span></li><li><span>Short Term Accommodation (STA)</span></li><li><span>NDIS Complex Care</span></li></ul></div>
+      <div class="marquee-track"><ul class="marquee-group"><li><span>NDIS Mental health care</span></li><li><span>Support Coordination</span></li><li><span>NDIS In-Home Support</span></li></ul></div>
+      <div class="marquee-track"><ul class="marquee-group"><li><span>Community Access</span></li><li><span>Community Nursing</span></li><li><span>Disability Transport Services</span></li></ul></div>
+    </section>
+
+    <section class="paths" aria-label="Find the right support">
+      <div class="paths-grid">
+        <a class="path reveal" style="--d:0.00s" href="contact.html">
+          <span class="path-eyebrow">New to the NDIS</span>
+          <h3>I need support setup</h3>
+          <p class="path-desc">Not sure where to start? We help you understand your plan and set up supports that fit your goals.</p>
+          <span class="path-link">Start an enquiry <i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></span>
+        </a>
+        <a class="path blue reveal" style="--d:0.18s" href="contact.html">
+          <span class="path-eyebrow">Changing providers</span>
+          <h3>My current provider isn’t working</h3>
+          <p class="path-desc">Switching is simple. We manage the handover so there are no gaps in your care.</p>
+          <span class="path-link">How switching works <i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></span>
+        </a>
+        <a class="path red reveal" style="--d:0.36s" href="contact.html">
+          <span class="path-eyebrow">Post-hospital support</span>
+          <h3>Coming home from hospital</h3>
+          <p class="path-desc">Safe, well-planned support so your return home is comfortable and your recovery stays on track.</p>
+          <span class="path-link">Discharge support <i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></i></span>
+        </a>
+      </div>
+    </section>
+
+
+    <section class="about" id="about">
+      <div class="about-inner">
+        <div class="reveal reveal-left">
+          <img class="about-img" src="about.jpg" alt="A support participant in a power wheelchair speaking with a group at a community event">
+        </div>
+        <div class="about-text reveal reveal-right">
+          <h2>About <span class="brand">7Aura</span></h2>
+          <p>At 7Aura, we believe support should be built around you, your goals, choices and lifestyle.</p>
+          <p>As a dedicated NDIS support provider, we deliver personalised services that adapt to your individual needs and help you build confidence, independence and meaningful connections.</p>
+          <p>Based in Victoria, Australia, our team is committed to providing compassionate, reliable and person-centred disability support. We tailor our services to each participant, empowering individuals to achieve their goals, enjoy greater independence and live life on their own terms.</p>
+          <div class="about-more">
+            <a class="btn-all" href="about.html">Know More <span class="arrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="services" id="services">
+      <div class="services-inner">
+        <div class="services-head">
+          <div class="svc-title-wrap reveal reveal-left">
+            <h2>Our <span class="hl">Disability</span> Support Services</h2>
+          </div>
+          <div class="services-intro reveal reveal-right">
+            <p>At 7AURA, we are committed to providing reliable and compassionate disability support tailored to each individual's circumstances. We focus on creating a supportive environment where every person feels valued, respected and empowered.</p>
+            <p>Through dedicated assistance and meaningful engagement, we help individuals overcome everyday challenges, explore new opportunities and enjoy a more independent and fulfilling life.</p>
+          </div>
+        </div>
+        <div class="services-grid">
+        <article class="svc reveal" id="sil" style="--d:0.00s">
+          <div class="svc-pic">
+            <div class="svc-img" style="background-image:url('hm01.jpg'); background-size:cover; background-position:50% 28%;"></div>
+          </div>
+          <h3>Supported Independent Living (SIL)</h3>
+          <p>Daily support in a shared home, helping you build skills and live as independently as possible.</p>
+          <a class="svc-link" href="supported-independent-living.html" aria-label="Learn more: Supported Independent Living (SIL)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </article>
+        <article class="svc reveal" id="ilo" style="--d:0.12s">
+          <div class="svc-pic">
+            <div class="svc-img" style="background-image:url('hm02.jpg'); background-size:auto 150%; background-position:86% 40%;"></div>
+          </div>
+          <h3>Individualised Living Options (ILO)</h3>
+          <p>Flexible, tailored arrangements that let you choose where and how you live, with support to match.</p>
+          <a class="svc-link" href="Individualised_Living_Options.html" aria-label="Learn more: Individualised Living Options (ILO)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </article>
+        <article class="svc reveal" id="sta" style="--d:0.24s">
+          <div class="svc-pic">
+            <div class="svc-img" style="background-image:url('hm03.jpg'); background-size:auto 150%; background-position:50% 14%;"></div>
+          </div>
+          <h3>Short Term Accommodation (STA)</h3>
+          <p>Short stays that give you or your family a break, with caring support throughout.</p>
+          <a class="svc-link" href="Short_Term_Accommodation.html" aria-label="Learn more: Short Term Accommodation (STA)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </article>
+        <article class="svc reveal" id="complex-care" style="--d:0.00s">
+          <div class="svc-pic">
+            <div class="svc-img" style="background-image:url('hm04.jpg'); background-size:cover; background-position:22% 50%;"></div>
+          </div>
+          <h3>NDIS Complex Care</h3>
+          <p>Specialised support from trained workers who understand your health and care needs.</p>
+          <a class="svc-link" href="NDIS_Complex_Care.html" aria-label="Learn more: NDIS Complex Care"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </article>
+        <article class="svc reveal" id="mental-health" style="--d:0.12s">
+          <div class="svc-pic">
+            <div class="svc-img" style="background-image:url('hm06.jpg'); background-size:cover; background-position:40% 50%;"></div>
+          </div>
+          <h3>NDIS Mental health care</h3>
+          <p>Compassionate support to manage daily life, build routines and stay connected.</p>
+          <a class="svc-link" href="NDIS_Mental_Health_Care.html" aria-label="Learn more: NDIS Mental health care"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </article>
+        <article class="svc reveal" id="support-coordination" style="--d:0.24s">
+          <div class="svc-pic">
+            <div class="svc-img" style="background-image:url('hm05.jpg'); background-size:cover; background-position:50% 30%;"></div>
+          </div>
+          <h3>Support Coordination</h3>
+          <p>Help to understand your NDIS plan, find providers and put your supports into action.</p>
+          <a class="svc-link" href="support_coordination.html" aria-label="Learn more: Support Coordination"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </article>
+        <article class="svc reveal" id="in-home-support" style="--d:0.00s">
+          <div class="svc-pic">
+            <div class="svc-img" style="background-image:url('hm10.jpg'); background-size:cover; background-position:45% 50%;"></div>
+          </div>
+          <h3>NDIS In-Home Support</h3>
+          <p>Personal care and household help in the comfort of your own home.</p>
+          <a class="svc-link" href="NDIS_In-Home_Support.html" aria-label="Learn more: NDIS In-Home Support"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </article>
+        <article class="svc reveal" id="community-access" style="--d:0.12s">
+          <div class="svc-pic">
+            <div class="svc-img" style="background-image:url('hm08.jpg'); background-size:auto 125%; background-position:50% 60%;"></div>
+          </div>
+          <h3>Community Access</h3>
+          <p>Support to join the social, recreational and community activities that matter to you.</p>
+          <a class="svc-link" href="Community_Access.html" aria-label="Learn more: Community Access"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </article>
+        <article class="svc reveal" id="community-nursing" style="--d:0.24s">
+          <div class="svc-pic">
+            <div class="svc-img" style="background-image:url('hm07.jpg'); background-size:cover; background-position:50% 40%;"></div>
+          </div>
+          <h3>Community Nursing</h3>
+          <p>Qualified nursing care at home or in the community to help manage your health.</p>
+          <a class="svc-link" href="Community_Nursing.html" aria-label="Learn more: Community Nursing"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </article>
+        <article class="svc reveal" id="transport" style="--d:0.00s">
+          <div class="svc-pic">
+            <div class="svc-img" style="background-image:url('hm09.jpg'); background-size:auto 125%; background-position:48% 13%;"></div>
+          </div>
+          <h3>Disability Transport Services</h3>
+          <p>Safe, reliable transport to appointments, activities and community outings.</p>
+          <a class="svc-link" href="Disability_Transport_Services.html" aria-label="Learn more: Disability Transport Services"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="know" id="know-more">
+      <div class="know-text reveal">
+        <h2>Trusted NDIS Provider in Victoria offering exceptional, person-centred care.</h2>
+      </div>
+      <div class="know-img reveal reveal-right" role="img" aria-label="A participant seated in a wheelchair in a bright, calm room"></div>
+    </section>
+
+    <section class="why" id="why-us">
+      <div class="why-inner">
+        <div class="why-head">
+          <div class="reveal reveal-left">
+            <span class="why-eyebrow">Why choose us</span>
+            <h2>Reliable Support, Built Around <span class="hl">You</span></h2>
+          </div>
+          <div class="reveal reveal-right">
+            <p>We tailor every service to the participant's goals, choices and lifestyle. You get compassionate, dependable support from a team that listens and helps you live life on your own terms.</p>
+            <a class="why-link" href="contact.html">Contact us</a>
+          </div>
+        </div>
+        <div class="why-grid">
+        <article class="wcard reveal" style="--d:0.00s">
+          <div class="wimg" style="background-image:url('hm11.jpg'); background-size:cover; background-position:45% 30%;"></div>
+          <h3>Person-Centred Support</h3>
+          <p>Every plan is shaped around your goals, choices and lifestyle, never a one-size-fits-all approach.</p>
+        </article>
+        <article class="wcard reveal" style="--d:0.12s">
+          <div class="wimg" style="background-image:url('hm12.jpg'); background-size:cover; background-position:50% 50%;"></div>
+          <h3>A Compassionate Team</h3>
+          <p>Our support workers treat every participant with respect, patience and genuine care.</p>
+        </article>
+        <article class="wcard reveal" style="--d:0.24s">
+          <div class="wimg" style="background-image:url('hero-3.jpg'); background-size:150%; background-position:45% 60%;"></div>
+          <h3>Reliable and Consistent</h3>
+          <p>Dependable support you can count on, so you and your family can plan with confidence.</p>
+        </article>
+        <article class="wcard reveal" style="--d:0.36s">
+          <div class="wimg" style="background-image:url('hm13.jpg'); background-size:cover; background-position:50% 50%;"></div>
+          <h3>Rooted in Victoria</h3>
+          <p>Based in Victoria, we know our community and the people in it.</p>
+        </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="intro" id="company">
+      <div class="intro-card reveal">
+        <h2><span class="hl">Registered</span> NDIS Disability Support from 7AURA</h2>
+        <p>7AURA provides NDIS disability support from Victoria, helping participants live with greater choice, comfort and independence. Our trained team delivers safe, respectful and compassionate care in a range of settings, including participants' homes, <a href="supported-independent-living.html">Supported Independent Living (SIL)</a>, <a href="Individualised_Living_Options.html">Individualised Living Options (ILO)</a> and <a href="Short_Term_Accommodation.html">Short Term Accommodation (STA)</a>.</p>
+        <p>We understand that every person's journey is different. That is why our approach focuses on personalised support plans that promote dignity, wellbeing and independence, built around your goals and delivered with reliability.</p>
+      </div>
+    </section>
+
+    <section class="complex" id="complex-care">
+      <div class="complex-inner">
+        <div class="complex-card reveal">
+          <img class="complex-img" src="complex-care.png" alt="A support worker assisting a participant in a wheelchair in a kitchen">
+          <div class="complex-text">
+            <h2>Specialist Complex Care Services</h2>
+            <p>At 7AURA, we deliver specialised care for individuals with complex health and disability-related needs. Our approach prioritises safety, comfort and individual wellbeing, with support tailored to each participant's care requirements and daily routines.</p>
+            <p class="complex-lead">Our complex care assistance includes:</p>
+            <ul class="complex-list">
+              <li>Complex bowel care and ongoing monitoring</li>
+              <li>Enteral nutrition and feeding tube assistance (PEG/PEJ)</li>
+              <li>Catheter management and continence support</li>
+              <li>Tracheostomy care in accordance with clinical instructions</li>
+              <li>Seizure monitoring and response support</li>
+              <li>Pressure care, skin protection and regular repositioning</li>
+              <li>Medication assistance and administration as prescribed</li>
+              <li>Psychosocial support for complex needs</li>
+              <li>Behaviour support plan implementation</li>
+            </ul>
+            <p>We also accommodate a range of specialised care needs through individualised support plans, working alongside participants, families and healthcare professionals to promote quality of life and continuity of care.</p>
+            <a class="complex-btn" href="contact.html"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg>Enquire About Complex Care</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" id="contact">
+    <div class="footer-inner">
+      <div>
+        <a href="index.html" class="footer-logo" aria-label="Aura home"><span class="footer-logo-mark"><img src="aura-logo-white.png" alt="Aura logo" onerror="this.onerror=null;this.src='aura-logo.png'"><img class="footer-logo-text" src="aura-logo-white.png" alt="" aria-hidden="true" onerror="this.onerror=null;this.src='aura-logo.png'"></span></a>
+        <p class="footer-about">Person-centred NDIS support built around your goals, choices and lifestyle, delivered with compassion and reliability from Victoria, Australia.</p>
+        <div class="footer-social">
+          <a href="https://www.facebook.com/7Aura.au" aria-label="Facebook" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+          <a href="https://www.instagram.com/7aura.au/?hl=en" aria-label="Instagram" target="_blank" rel="noopener"><svg class="stroke" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="career.html">Career</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-services">
+        <h4>Our Services</h4>
+        <ul class="footer-links two-col">
+          <li><a href="supported-independent-living.html">Supported Independent Living</a></li>
+          <li><a href="Individualised_Living_Options.html">Individualised Living Options</a></li>
+          <li><a href="Short_Term_Accommodation.html">Short Term Accommodation</a></li>
+          <li><a href="NDIS_Complex_Care.html">NDIS Complex Care</a></li>
+          <li><a href="NDIS_Mental_Health_Care.html">NDIS Mental Health Care</a></li>
+          <li><a href="support_coordination.html">Support Coordination</a></li>
+          <li><a href="NDIS_In-Home_Support.html">NDIS In-Home Support</a></li>
+          <li><a href="Community_Access.html">Community Access</a></li>
+          <li><a href="Community_Nursing.html">Community Nursing</a></li>
+          <li><a href="Disability_Transport_Services.html">Disability Transport Services</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact Us</h4>
+        <ul class="footer-contact">
+          <li><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Victoria, Australia</span></li>
+          <li><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><a href="mailto:7auraau@gmail.com">7auraau@gmail.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-bottom-inner">
+        <span>&copy; <span id="year">2026</span> 7Aura. All rights reserved.</span>
+        <span>Registered NDIS Support Provider</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const toggle = document.querySelector('.nav-toggle');
+    const menu = document.getElementById('nav-menu');
+    const dd = document.querySelector('.has-dropdown');
+    const ddBtn = dd.querySelector('.dropdown-toggle');
+
+    toggle.addEventListener('click', () => {
+      const open = menu.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', open);
+    });
+
+    ddBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = dd.classList.toggle('open');
+      ddBtn.setAttribute('aria-expanded', open);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!dd.contains(e.target)) {
+        dd.classList.remove('open');
+        ddBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Navbar gets a white background only after scrolling past the hero
+    const navbar = document.querySelector('.navbar');
+    function onScroll() {
+      const hero = document.querySelector('.hero');
+      navbar.classList.toggle('scrolled', window.scrollY > hero.offsetHeight - 200);
+      // Switch navbar to white text once the black footer reaches it
+      const footer = document.querySelector('.footer');
+      if (footer) navbar.classList.toggle('on-footer', footer.getBoundingClientRect().top <= navbar.offsetHeight / 2);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+
+    // Services marquee: fill each row past the screen width, then duplicate for a seamless loop
+    function buildMarquee() {
+      document.querySelectorAll('.marquee-track').forEach(function (track) {
+        const group = track.querySelector('.marquee-group');
+        if (!group.dataset.orig) group.dataset.orig = group.innerHTML;
+        track.querySelectorAll('.marquee-group[aria-hidden]').forEach(function (n) { n.remove(); });
+        group.innerHTML = group.dataset.orig;
+        let guard = 0;
+        while (group.scrollWidth < window.innerWidth && guard++ < 10) group.innerHTML += group.dataset.orig;
+        const copy = group.cloneNode(true);
+        copy.setAttribute('aria-hidden', 'true');
+        track.appendChild(copy);
+      });
+    }
+    buildMarquee();
+    let mqTimer;
+    window.addEventListener('resize', function () { clearTimeout(mqTimer); mqTimer = setTimeout(buildMarquee, 250); });
+
+    // Slide-in animations when sections scroll into view
+    const reveals = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+      }, { threshold: 0.2 });
+      reveals.forEach(el => io.observe(el));
+    } else {
+      reveals.forEach(el => el.classList.add('in'));
+    }
+
+    // Hero slideshow: change every 4 seconds
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dots button');
+    let current = 0, timer;
+    const accent = document.querySelector('.wipe-accent');
+    function runAccent() {
+      if (!accent) return;
+      accent.classList.remove('run'); void accent.offsetWidth; accent.classList.add('run');
+    }
+    function show(n) {
+      n = (n + slides.length) % slides.length;
+      if (n === current) return;
+      // finish any wipe still running (fast clicks on the dots)
+      slides.forEach(sl => sl.classList.remove('leaving', 'entering'));
+      const old = slides[current], next = slides[n];
+      old.classList.remove('active');
+      old.classList.add('leaving');          // stays visible underneath
+      dots[current].classList.remove('active');
+      current = n;
+      next.classList.add('active', 'entering'); // wipes in diagonally on top
+      runAccent();
+      dots[current].classList.add('active');
+    }
+    slides.forEach(sl => sl.addEventListener('animationend', e => {
+      if (e.animationName !== 'irisIn') return;
+      sl.classList.remove('entering');
+      slides.forEach(o => { if (o !== sl) o.classList.remove('leaving'); });
+    }));
+    function start() { timer = setInterval(() => show(current + 1), 4000); }
+    dots.forEach((d, i) => d.addEventListener('click', () => {
+      clearInterval(timer); show(i); start();
+    }));
+    if (document.body.classList.contains('loading')) window.addEventListener('pageready', () => { runAccent(); start(); }, { once: true });
+    else { runAccent(); start(); }
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Loading screen: fade out once the page is ready (min. 1.2s so the animation is seen)
+    (function () {
+      const loader = document.getElementById('loader');
+      const started = Date.now();
+      let done = false;
+      function finish() {
+        if (done) return; done = true;
+        const wait = Math.max(0, 1200 - (Date.now() - started));
+        setTimeout(() => {
+          loader.classList.add('hide');
+          document.body.classList.remove('loading');
+          window.dispatchEvent(new Event('pageready'));
+          setTimeout(() => loader.remove(), 700);
+        }, wait);
+      }
+      if (document.readyState === 'complete') finish();
+      else window.addEventListener('load', finish);
+      setTimeout(finish, 5000); // failsafe
+    })();
+  </script>
+</body>
+</html>

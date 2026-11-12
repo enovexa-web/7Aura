@@ -38,7 +38,11 @@
       color: #fff;
       transition: background .3s, box-shadow .3s;
     }
-    .topbar.scrolled { background: var(--red); box-shadow: 0 2px 10px rgba(0,0,0,.15); }
+    /* no background: just switch text to dark once past the hero so it stays readable on white */
+    .topbar.scrolled .social a,
+    .topbar.scrolled .topbar-phone,
+    .topbar.scrolled .topbar-email { color: #000; }
+    .topbar.scrolled .social a:hover { background: rgba(0,0,0,.08); }
     .topbar-inner {
       max-width: 1200px;
       margin: 0 auto;
